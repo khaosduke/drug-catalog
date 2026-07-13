@@ -1,4 +1,4 @@
-#Intro and Credits 
+# Intro and Credits 
 
 This was taken from Joseph Nahmias' https://gitlab.com/jello/RxNorm_pg.git, used to load RxNorm database files to postgres.
 
