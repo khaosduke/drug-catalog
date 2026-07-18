@@ -1,0 +1,30 @@
+﻿substance,cscn,csa_schedule,narcotic,other_names
+Amphetamine,1100,II,N,Dexedrine; Adderall; Obetrol
+Methamphetamine,1105,II,N,Desoxyn; D-desoxyephedrine; ICE; Crank; Speed
+Lisdexamfetamine,1205,II,N,Vyvanse
+Benzphetamine,1228,III,N,Didrex; Inapetyl
+Cathine,1230,IV,N,"Constituent of ""Khat"" plant; (+)-norpseudoephedrine"
+Stimulant compounds previously excepted,1405,III,N,Mediatric
+Pyrovalerone,1485,V,N,Centroton; Thymergix
+Pemoline,1530,IV,N,Cylert
+Fenproporex,1575,IV,N,Gacilin; Solvolip
+Mefenorex,1580,IV,N,Anorexic; Amexate; Doracil; Pondinil
+Mazindol,1605,IV,N,Sanorex; Mazanor
+Diethylpropion,1610,IV,N,Tenuate; Tepanil
+Phendimetrazine,1615,III,N,Plegine; Prelu-2; Bontril; Melfiat; Statobex
+Lorcaserin,1625,IV,N,Belviq
+Phenmetrazine,1631,II,N,Preludin
+SPA,1635,IV,N,"1-Dimethylamino-1,2-diphenylethane; Lefetamine"
+Phentermine,1640,IV,N,Ionamin; Fastin; Adipex-P; Obe-Nix; Zantryl
+Chlorphentermine,1645,III,N,Pre-Sate; Lucofen; Apsedon; Desopimon
+Clortermine,1647,III,N,Voranil
+"Solriamfetol (2-amino-3-phenylpropyl car-bamate; benzenepropanol, beta-amino-, carbamate (ester))",1650,IV,N,
+Sibutramine,1675,IV,N,Meridia
+Modafinil,1680,IV,N,Provigil
+Methylphenidate,1724,II,N,Concerta; Ritalin; Methylin
+Serdexmethylphenidate,1729,IV,N,
+Pipradrol,1750,IV,N,Detari; Stimolag Fortis
+Fencamfamin,1760,IV,N,Reactivan
+Coca Leaves,9040,II,Y,
+Cocaine,9041,II,Y,Methyl benzoylecgonine; Crack
+Ecgonine,9180,II,Y,"Cocaine precursor, in Coca leaves"

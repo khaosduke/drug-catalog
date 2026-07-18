@@ -1,0 +1,34 @@
+substance,cscn,csa_schedule,narcotic,other_names
+Phenobarbital,2285,IV,N,Luminal; Bellergal-S
+Clonazepam,2737,IV,N,Klonopin; Clonopin
+Chlordiazepoxide,2744,IV,N,Librium; Libritabs; Limbitrol; SK-Lygen
+Diazepam,2765,IV,N,Valium; Diastat
+Midazolam,2884,IV,N,Versed
+Lorazepam,2885,IV,N,Ativan
+Ketamine,7285,III,N,Ketaset; Ketalar; Special K; K
+Buprenorphine,9064,III,Y,Buprenex; Temgesic; Subutex; Suboxone
+Oxycodone,9143,II,Y,OxyContin; Percocet; Endocet; Roxicodone; Roxicet
+Hydromorphone,9150,II,Y,Dilaudid; dihydromorphinone
+Morphine,9300,II,Y,MS Contin; Roxanol; Oramorph; RMS; MSIR
+Oxymorphone,9652,II,Y,Numorphan
+Tramadol,9752,IV,Y,Tramadol
+Fentanyl,9801,II,Y,Duragesic; Oralet; Actiq; Sublimaze; Innovar
+Hydrocodone,9193,II,Y,Dihydrocodeinone
+Methadone,9250,II,Y,Dolophine; Methadose; Amidone
+Meperidine,9230,II,Y,Demerol; Mepergan; pethidine
+Codeine,9050,II,Y,Morphine methyl ester; methyl morphine
+Dihydrocodeine,9120,II,Y,Didrate; Parzone
+Pentazocine,9709,IV,N,Talwin; Talwin NX; Talacen; Talwin Compound
+Butorphanol,9720,IV,N,Stadol; Stadol NS; Torbugesic; Torbutrol
+Alfentanil,9737,II,Y,Alfenta
+Remifentanil,9739,II,Y,Ultiva
+Sufentanil,9740,II,Y,Sufenta
+Tapentadol,9780,II,Y,
+Levorphanol,9220,II,Y,Levo-Dromoran
+Oliceridine,9245,II,Y,
+Brivaracetam,2710,V,N,BRV; UCB-34714; Briviact; ((2S)-2-[(4R)-2-oxo-4-propylpyrrolidin-1-yl] butanamide)
+Thiopental,2100,III,N,Pentothal
+Methohexital,2264,IV,N,Brevital
+Pentobarbital,2270,II,N,Nembutal
+Perampanel,2261,III,N,"Fycompa; [2-(2-oxo-l-phenyl-5-pyridin-2-yl-l ,2-dihydropyridin-3-yl) benzonitrile]"
+Fospropofol,2138,IV,N,Lusedra
