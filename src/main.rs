@@ -152,8 +152,8 @@ fn list_to_hashset(exclusion_list: &Vec<StringRecord>) -> std::collections::Hash
         exclusion_set.insert(normalize(&record[0]));
     }
 
-    let debug_string = format!("{:?}", exclusion_set);
-    println!("Exclusion set: {}", debug_string);
+    //let debug_string = format!("{:?}", exclusion_set);
+    //println!("Exclusion set: {}", debug_string);
     exclusion_set
 }
 
@@ -170,7 +170,7 @@ fn check_exclusions(exclusions_dir: &str) -> Result<(), Box<dyn std::error::Erro
         if file_name == ".DS_Store" {
             continue;
         }
-        println!("Checking file: {:?}", file_name);
+        //println!("Checking file: {:?}", file_name);
 
         file_list.push(file_name.clone());
 
