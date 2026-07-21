@@ -1,9 +1,7 @@
 use clap::Parser;
-use std::fs;
 use colored::Colorize;
 use csv::StringRecord;
-use std::collections::HashSet;
-//use std::path::Path;
+
 
 /// Strips down a DEA controlled substances list to only the relevant columns and removes any entries that are in the exclusion list.
 #[derive(Parser, Debug)]
