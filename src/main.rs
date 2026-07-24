@@ -19,22 +19,28 @@ struct Args {
     #[arg(short, long, default_value = "./output/output.csv")]
     output: String,
 
+    ///Temp file
+    #[arg(short,long, default_value = "./output/temp.csv")]
+    temp: String,
+
 }
 
 fn main() {
     let args = Args::parse();
-    let temp_file = "./output/temp.csv";
-
+    
+    println!("Using...");
     println!("Input file: {}", args.input);
     println!("Exclusions directory: {}", args.exclusions);
     println!("Output file: {}", args.output);
+    println!("Temp file: {}",args.temp);
+    println!("----------------------------------------------");
 
     if let Err(e) = check_exclusions(&args.exclusions) {
         eprintln!("Error checking exclusions: {}", e);
         std::process::exit(1);
     }
 
-    if let Err(e) = remove_schedule_1(&args.input, &temp_file) {
+    if let Err(e) = remove_schedule_1(&args.input, &args.temp) {
         eprintln!("Error processing input file: {}", e);
         std::process::exit(1);
     }
@@ -43,7 +49,7 @@ fn main() {
         Ok(exclusion_list) => {
             let exclusion_set = list_to_hashset(&exclusion_list);
             //we want the output from removing the schedule one so both
-            if let Err(e) = remove_exclusions(&temp_file, &args.output, exclusion_set) {
+            if let Err(e) = remove_exclusions(&args.temp, &args.output, exclusion_set) {
                 eprintln!("Error removing exclusions from exclusion filest: {}", e);
                 std::process::exit(1);
             }
