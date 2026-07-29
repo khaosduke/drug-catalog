@@ -1,4 +1,5 @@
 use clap::Parser;
+use std::collections::HashMap;
 
 mod exclude;
 use exclude::exclude;
@@ -24,7 +25,8 @@ struct Args {
 
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
     
 
@@ -32,7 +34,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Exclusions directory: {}", args.exclusions);
     println!("Output file: {}", args.output);
 
-    let _ = exclude(&args.input,&args.exclusions,&args.output)?;
+    let rxnorm = RxNormApi::new()?;
+
+    let drug_rxcui = "4337";//Fentanyl
+
+    let ops = HashMap::from([
+        ("format","json"),
+        ("tty","SCD SBD SCDG SBDG")
+    ]);
+
+    //let response = rxnorm.get(drug_related_by_type_function,&relatedbytype_ops).await?;
+    let response = rxnorm.get_related_by_type(drug_rxcui, &ops).await?;
+    println!("Got: {:?}",response.text().await?);
+
+
+
+
+    //let _ = exclude(&args.input,&args.exclusions,&args.output)?;
 
     
 
