@@ -1,5 +1,7 @@
 use clap::Parser;
+use clap::{Command, arg};
 use std::collections::HashMap;
+
 
 mod exclude;
 use exclude::exclude;
@@ -23,6 +25,21 @@ struct Args {
     #[arg(short, long, default_value = "./output/output.csv")]
     output: String,
 
+}
+
+fn cli() -> Command {
+    Command::new("drugcat")
+        .about("Used to filter out drug lists from the DEA using RxNorm as the reference database")
+        .subcommand_required(true)
+        .subcommand(
+            Command::new("exclude")
+            .about("Removes drugs from the standard DEA list based on a set of exclusion lists")
+        )
+        .subcommand(
+            Command::new("lookup")
+            .about("Look up drugs from input csv with RxNorm")
+        )
+        
 }
 
 #[tokio::main]
