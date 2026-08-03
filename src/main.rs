@@ -1,5 +1,4 @@
 use clap::{Parser, Subcommand};
-use std::collections::HashMap;
 
 
 mod exclude;
@@ -8,7 +7,6 @@ use exclude::exclude;
 mod map;
 use map::map;
 
-use rxnorm_api::RxNormApi;
 
 
 /// Strips down a DEA controlled substances list to only the relevant columns and removes any entries that are in the exclusion list.
@@ -67,30 +65,7 @@ enum Commands {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
-    
-
-    //println!("Input file: {}", args.input);
-    //println!("Exclusions directory: {}", args.exclusions);
-    //println!("Output file: {}", args.output);
-
-    //let rxnorm = RxNormApi::new()?;
-
-    //let drug_rxcui = "4337";//Fentanyl
-
-    //let ops = HashMap::from([
-    //    ("format","json"),
-    //    ("tty","SCD SBD SCDG SBDG")
-    //]);
-
-    //let response = rxnorm.get(drug_related_by_type_function,&relatedbytype_ops).await?;
-    //let response = rxnorm.get_related_by_type(drug_rxcui, &ops).await?;
-    //println!("Got: {:?}",response.text().await?);
-
-
-
-
-    //let _ = exclude(&args.input,&args.exclusions,&args.output)?;
-
+   
     match args.command {
         Commands::Filter {
             input,
