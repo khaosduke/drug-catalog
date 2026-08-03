@@ -5,12 +5,15 @@ use std::collections::HashMap;
 mod exclude;
 use exclude::exclude;
 
+mod map;
+use map::map;
+
 use rxnorm_api::RxNormApi;
 
 
 /// Strips down a DEA controlled substances list to only the relevant columns and removes any entries that are in the exclusion list.
 #[derive(Parser, Debug)]
-#[command(version, about)]
+#[command(version, about, long_about = None)]
 struct Args {
     
     #[command(subcommand)]
@@ -21,22 +24,23 @@ struct Args {
 enum Commands {
     /// Remove excluded drugs from the DEA list
     Filter {
+        /// Input CSV file containing the DEA controlled substances list
         #[arg(
-            short,
+            short ='i',
             long,
             default_value = "./input/dea_controlled_substances.csv"
         )]
         input: String,
-
+        /// Directory containing CSV files with drugs to exclude
         #[arg(
-            short,
+            short ='e',
             long,
             default_value = "./exclusion_lists"
         )]
         exclusions: String,
-
+        /// Output CSV file for the filtered DEA list
         #[arg(
-            short,
+            short ='o',
             long,
             default_value = "./output/output.csv"
         )]
@@ -46,14 +50,14 @@ enum Commands {
     /// Look up drugs through RxNorm
     Map {
         #[arg(
-            short,
+            short ='i',
             long,
             default_value = "./output/output.csv"
         )]
         input: String,
 
         #[arg(
-            short,
+            short ='o',
             long,
             default_value = "./output/rxnorm_catalog.csv"
         )]
@@ -98,19 +102,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         Commands::Map { input, output } => {
             println!("Mapping {input} to {output}");
-
-            let rxnorm = RxNormApi::new()?;
-
-            let options = HashMap::from([
-                ("format", "json"),
-                ("tty", "SCD SBD SCDG SBDG"),
-            ]);
-
-            let response = rxnorm
-                .get_related_by_type("4337", &options)
-                .await?;
-
-            println!("{}", response.text().await?);
+            map(&input, &output).await?;
         }
     }
 
