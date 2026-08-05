@@ -32,10 +32,16 @@ async fn dea_to_rsxui(input: &str, output: &str) -> Result<(), Box<dyn std::erro
     let mut wtr = csv::Writer::from_path(output)?;
 
     let rxnorm = RxNormApi::new()?;
+
     //Std options for the find rxcui, exact normalized search
-    let mut options = HashMap::from([
+    let  exact_options = HashMap::from([
         ("format", "json"),
         ("search", "2"),
+    ]);
+
+    let approx_options = HashMap::from([
+        ("format", "json"),
+        ("search", "9"),
     ]);
 
     //Write the header row to the output file
@@ -48,7 +54,7 @@ async fn dea_to_rsxui(input: &str, output: &str) -> Result<(), Box<dyn std::erro
         let json: Value = loop {
             let response = rxnorm.find_rxcui_by_string(
                 &dea_name,
-                &options).await?;
+                &exact_options).await?;
 
             let response_body = response.text().await?;
             let json_response: Value = serde_json::from_str(&response_body)?;
@@ -59,18 +65,15 @@ async fn dea_to_rsxui(input: &str, output: &str) -> Result<(), Box<dyn std::erro
             }
 
             //If not do an approximate search
-            if let Some(search) = options.get_mut("search") {
-                *search = "9";
-            }
             let response = rxnorm.find_rxcui_by_string(
                 &dea_name,
-                &options).await?;
+                &approx_options).await?;
 
             let response_body = response.text().await?;
             let json_response: Value = serde_json::from_str(&response_body)?;
 
-            break json_response;    
 
+            break json_response;    
         };
 
         let output_record = [
