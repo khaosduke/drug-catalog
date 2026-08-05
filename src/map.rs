@@ -21,12 +21,12 @@ impl Display for ResultType {
     }
 }
 pub async fn map(input: &str, output: &str) -> Result<(), Box<dyn std::error::Error>> {
-    dea_to_rsxui(input, output).await?;
+    dea_to_rxcui(input, output).await?;
     Ok(())
 }
 
 // Gets the RXCUI for all the DEA names in the input CSV file and writes them to the output CSV file
-async fn dea_to_rsxui(input: &str, output: &str) -> Result<(), Box<dyn std::error::Error>> {
+async fn dea_to_rxcui(input: &str, output: &str) -> Result<(), Box<dyn std::error::Error>> {
     
     let mut rdr = csv::Reader::from_path(input)?;
     let mut wtr = csv::Writer::from_path(output)?;
