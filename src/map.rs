@@ -57,10 +57,13 @@ async fn dea_to_rxcui(input: &str, output: &str) -> Result<(), Box<dyn std::erro
                                 &approx_options, 
                                 &rxnorm).await?;
 
+        let rxcui = get_rxcui(&json).unwrap_or_else(|| "N/A".to_string());
+        let match_type = result_type.to_string();
+        
         let output_record = [
             &dea_name,
-            &get_rxcui(&json).unwrap_or_else(|| "N/A".to_string()),
-            &result_type.to_string()
+            &rxcui,
+            &match_type
         ];
 
         println!("Got: {:?}", json["idGroup"]["rxnormId"]);

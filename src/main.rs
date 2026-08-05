@@ -7,6 +7,9 @@ use exclude::exclude;
 mod map;
 use map::map;
 
+mod concept;
+use concept::concepts;
+
 
 
 /// Strips down a DEA controlled substances list to only the relevant columns and removes any entries that are in the exclusion list.
@@ -45,7 +48,7 @@ enum Commands {
         output: String,
     },
 
-    /// Look up drugs through RxNorm
+    /// Look up drugs through RxNorm, get RXCUI
     Map {
         #[arg(
             short ='i',
@@ -61,12 +64,33 @@ enum Commands {
         )]
         output: String,
     },
+
+    /// Get all available drug concepts for a given drug name. 
+    /// Takes in a CSV of drugs with RXCUI
+    /// Outputs a directory with a CSV of all concepts for each drug name
+    /// Eg. output/drug_name_concepts/{rxcui}_drug-name.csv
+    Concepts {
+        #[arg(
+            short ='i',
+            long,
+            default_value = "./output/rxnorm_catalog.csv"
+        )]
+        input: String,              
+
+        #[arg(
+            short ='o',
+            long,
+            default_value = "./output/drug_name_concepts"
+        )]
+        output: String,
+    },
 }
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
    
     match args.command {
+        
         Commands::Filter {
             input,
             exclusions,
@@ -78,6 +102,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Commands::Map { input, output } => {
             println!("Mapping {input} to {output}");
             map(&input, &output).await?;
+        }
+
+        Commands::Concepts { input, output } => {
+            println!("Getting concepts for {input} and writing to {output}");
+            concepts(&input, &output).await?;   
         }
     }
 
