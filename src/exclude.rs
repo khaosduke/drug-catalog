@@ -14,7 +14,7 @@ pub fn exclude(input_file: &str, exclusions_dir: &str, output_file: &str)
 
         //Extract the exclusions to a hashset
         let excluded_drugs = exclusions_to_hashset(&exclusions_dir)?;
-        let _  = remove_exclusions(&temp_file,&output_file,excluded_drugs)?;
+        remove_exclusions(&temp_file,&output_file,excluded_drugs)?;
         
         Ok(())
     }
