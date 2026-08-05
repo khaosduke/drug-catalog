@@ -51,7 +51,7 @@ async fn dea_to_rsxui(input: &str, output: &str) -> Result<(), Box<dyn std::erro
         let record = result?;
         let dea_name = first_token_normalized(&record[0]);
      
-        let json: Value = loop {
+        let (json,result_type): (Value, ResultType) = loop {
             let response = rxnorm.find_rxcui_by_string(
                 &dea_name,
                 &exact_options).await?;
@@ -60,26 +60,26 @@ async fn dea_to_rsxui(input: &str, output: &str) -> Result<(), Box<dyn std::erro
             let json_response: Value = serde_json::from_str(&response_body)?;
             
             //Check the response, if its exact we are done
-            if check_exact_match(&json_response) == ResultType::ExactMatch {
-                break json_response;
+            match check_exact_match(&json_response) {
+                ResultType::ExactMatch => break (json_response, ResultType::ExactMatch),
+                ResultType::ApproximateMatch => break (json_response, ResultType::ApproximateMatch),
+                ResultType::NoMatch => {
+                    //If not do an approximate search
+                    let response = rxnorm.find_rxcui_by_string(
+                                    &dea_name,
+                                    &approx_options).await?;
+
+                    let response_body = response.text().await?;
+                    let json_response: Value = serde_json::from_str(&response_body)?;
+                    break (json_response, ResultType::ApproximateMatch);    
+                },
             }
-
-            //If not do an approximate search
-            let response = rxnorm.find_rxcui_by_string(
-                &dea_name,
-                &approx_options).await?;
-
-            let response_body = response.text().await?;
-            let json_response: Value = serde_json::from_str(&response_body)?;
-
-
-            break json_response;    
         };
 
         let output_record = [
             &dea_name,
             &get_rxcui(&json).unwrap_or_else(|| "N/A".to_string()),
-            &check_exact_match(&json).to_string()
+            &result_type.to_string()
         ];
 
 
