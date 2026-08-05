@@ -45,7 +45,7 @@ async fn dea_to_rxcui(input: &str, output: &str) -> Result<(), Box<dyn std::erro
     ]);
 
     //Write the header row to the output file
-    wtr.write_record(&["DEA Name", "RX CUI", "Exact Match"])?;
+    wtr.write_record(&["DEA Name", "RX CUI", "Match Type"])?;
 
     for result in rdr.records() {
         let record = result?;
@@ -62,7 +62,14 @@ async fn dea_to_rxcui(input: &str, output: &str) -> Result<(), Box<dyn std::erro
             //Check the response, if its exact we are done
             match check_exact_match(&json_response) {
                 ResultType::ExactMatch => break (json_response, ResultType::ExactMatch),
-                ResultType::ApproximateMatch => break (json_response, ResultType::ApproximateMatch),
+                ResultType::ApproximateMatch => {
+                    let result_type = if get_rxcui(&json_response).is_some() {
+                            ResultType::ApproximateMatch
+                        } else {
+                            ResultType::NoMatch
+                        };
+                    break (json_response, result_type);
+                },
                 ResultType::NoMatch => {
                     //If not do an approximate search
                     let response = rxnorm.find_rxcui_by_string(
@@ -106,17 +113,11 @@ fn get_rxcui(json_response: &Value) -> Option<String> {
 }
 
 fn check_exact_match(json_response: &Value) -> ResultType {
-    //Get the array
-    if json_response["idGroup"]["rxnormId"].is_null() {
-        return ResultType::NoMatch;
+    if get_rxcui(json_response).is_some() {
+        ResultType::ExactMatch
+    } else {
+        ResultType::NoMatch
     }
-
-    let rxnorm_ids = json_response["idGroup"]["rxnormId"].as_array().unwrap();
-    //If we get two ids we dont have exact match 
-    if rxnorm_ids.len() > 1 {
-        return ResultType::ApproximateMatch;
-    }
-    ResultType::ExactMatch
 }
 
 //Just in case we get a drug name with a chemical name following
