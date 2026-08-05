@@ -50,45 +50,18 @@ async fn dea_to_rxcui(input: &str, output: &str) -> Result<(), Box<dyn std::erro
     for result in rdr.records() {
         let record = result?;
         let dea_name = first_token_normalized(&record[0]);
-     
-        let (json,result_type): (Value, ResultType) = loop {
-            let response = rxnorm.find_rxcui_by_string(
-                &dea_name,
-                &exact_options).await?;
-
-            let response_body = response.text().await?;
-            let json_response: Value = serde_json::from_str(&response_body)?;
-            
-            //Check the response, if its exact we are done
-            match check_exact_match(&json_response) {
-                ResultType::ExactMatch => break (json_response, ResultType::ExactMatch),
-                ResultType::ApproximateMatch => {
-                    let result_type = if get_rxcui(&json_response).is_some() {
-                            ResultType::ApproximateMatch
-                        } else {
-                            ResultType::NoMatch
-                        };
-                    break (json_response, result_type);
-                },
-                ResultType::NoMatch => {
-                    //If not do an approximate search
-                    let response = rxnorm.find_rxcui_by_string(
-                                    &dea_name,
-                                    &approx_options).await?;
-
-                    let response_body = response.text().await?;
-                    let json_response: Value = serde_json::from_str(&response_body)?;
-                    break (json_response, ResultType::ApproximateMatch);    
-                },
-            }
-        };
+        
+        let (json, result_type) = find_result_with_type(
+                                &dea_name, 
+                                &exact_options, 
+                                &approx_options, 
+                                &rxnorm).await?;
 
         let output_record = [
             &dea_name,
             &get_rxcui(&json).unwrap_or_else(|| "N/A".to_string()),
             &result_type.to_string()
         ];
-
 
         println!("Got: {:?}", json["idGroup"]["rxnormId"]);
         // Write the filtered record to the output file
@@ -97,6 +70,43 @@ async fn dea_to_rxcui(input: &str, output: &str) -> Result<(), Box<dyn std::erro
 
     wtr.flush()?;
     Ok(())
+}
+
+//Gets possible RXCUI results for a name, first trying exact match, then approximate match if no exact match is found
+async fn find_result_with_type(dea_name:&str,
+                         exact_options: &HashMap<&str, &str>, 
+                         approx_options: &HashMap<&str, &str>, 
+                         rxnorm: &RxNormApi) 
+        -> Result<(Value, ResultType), Box<dyn std::error::Error>> {
+    
+    let response = rxnorm
+            .find_rxcui_by_string(&dea_name, &exact_options)
+            .await?;
+
+    let body = response.text().await?;
+    let exact_json: Value = serde_json::from_str(&body)?;
+    
+    let (json, result_type) = 
+        if get_rxcui(&exact_json).is_some() {
+            (exact_json, ResultType::ExactMatch)
+        } else {
+            let response = rxnorm
+                .find_rxcui_by_string(&dea_name, &approx_options)
+                .await?;
+
+            let body = response.text().await?;
+            let approximate_json: Value = serde_json::from_str(&body)?;
+
+            let result_type = 
+                if get_rxcui(&approximate_json).is_some() {
+                    ResultType::ApproximateMatch
+                } else {
+                    ResultType::NoMatch
+                };
+        (approximate_json, result_type)
+    };
+
+    Ok((json, result_type))
 }
 
 fn get_rxcui(json_response: &Value) -> Option<String> {
@@ -110,14 +120,6 @@ fn get_rxcui(json_response: &Value) -> Option<String> {
     }
 
     Some(rxnorm_ids[0].as_str().unwrap_or("").to_string())
-}
-
-fn check_exact_match(json_response: &Value) -> ResultType {
-    if get_rxcui(json_response).is_some() {
-        ResultType::ExactMatch
-    } else {
-        ResultType::NoMatch
-    }
 }
 
 //Just in case we get a drug name with a chemical name following
