@@ -44,7 +44,8 @@ fn remove_schedule_1(input_file: &str, output_file: &str) -> Result<(), Box<dyn 
         total_count += 1;
         let record = entry?;
         if record.get(2) != Some("I") {
-            output_file.write_record(&record)?;
+            output_file.write_record(&record)?;   
+        } else {
             excluded_count += 1;
         }
     }
@@ -118,25 +119,36 @@ fn check_exclusions(exclusions_dir: &str)
         if file_name == ".DS_Store" {
             continue;
         }
-        //println!("Checking file: {:?}", file_name);
-
-        file_list.push(file_name.clone());
-
-        let mut extensions = file_name.split('.').collect::<Vec<&str>>();
-        //Remove the first element
-        extensions.remove(0);
-
+        //If not even a file, error out
         if !entry.metadata()?.is_file() {
             return Err("Exclusion file is not a regular file".into());
         }
-        if (extensions[1] != "csv") || (extensions[0] != "exc" )  {
-            return Err("Exclusion files not properly named".into()); 
-        }
+        check_file_name_format(&file_name)?;
+        file_list.push(file_name.clone());
     }
 
     print_vec_with_newlines(&file_list);
     Ok(())
 }
+
+fn check_file_name_format(file_name: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let extensions = file_name.split('.').collect::<Vec<&str>>();
+    //The file format, if correct is "file.exc.csv" should have minimum 3 elements
+    if extensions.len() < 3 {
+        return Err("Exclusion file is not properly named".into());
+    }
+    //Iterate in reverse order to check the last two elements
+    for (i, ext) in extensions.iter().rev().enumerate() {
+        if i == 0 && *ext != "csv" {
+            return Err("Exclusion file is not a CSV file".into());
+        }
+        if i == 1 && *ext != "exc" {
+            return Err("Exclusion file is not properly named".into());
+        }
+    }
+    Ok(())
+}
+
 
 fn print_vec_with_newlines(vec: &Vec<String>) {
     for item in vec {

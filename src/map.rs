@@ -121,6 +121,6 @@ fn check_exact_match(json_response: &Value) -> ResultType {
 
 //Just in case we get a drug name with a chemical name following
 fn first_token_normalized(input: &str) -> String {
-    let first_token = input.split_whitespace().next().unwrap_or("");
+    let first_token = input.split("(").next().unwrap_or("");
     first_token.to_lowercase()
 }
