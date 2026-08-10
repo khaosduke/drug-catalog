@@ -297,6 +297,7 @@ dependencies = [
  "clap",
  "colored",
  "csv",
+ "regex",
  "rxnorm_api",
  "sanitize-filename",
  "serde",
