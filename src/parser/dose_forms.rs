@@ -1,4 +1,9 @@
 
+
+struct Route {
+    route_text: String,
+}
+
 struct DoseForm {
     route: Route,
     physical_form: PhysicalForm,
@@ -6,6 +11,7 @@ struct DoseForm {
     delivery_device: Option<DeliveryDevice>,
     rxnorm_text: String,
 }
+
 
 
 const DOSE_FORMS: &[&str] = &[

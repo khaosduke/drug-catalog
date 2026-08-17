@@ -21,7 +21,7 @@ pub static ITEM_MULTIPLE_REGEX: Lazy<Regex> = Lazy::new(|| {
     ).unwrap()
 });
 
-pub static BRAND_REGEX: Lazy<Regex> = Lazy::new(|| {
+pub static BRAND_PACK_REGEX: Lazy<Regex> = Lazy::new(|| {
     Regex::new(
         r"^(?<generic>.+?)(?:\s+\[(?<brand>[^\[\]]+)\])?$"
     ).unwrap()
