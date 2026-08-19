@@ -13,6 +13,9 @@ use concept::concepts;
 mod parser;
 use parser::parse;
 
+use std::fs;
+use std::path::Path;
+
 
 
 /// Strips down a DEA controlled substances list to only the relevant columns and removes any entries that are in the exclusion list.
@@ -130,8 +133,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         Commands::ParseDrug { input, output } => {
             println!("Parsing drugs from {input} and writing to {output}");
-            let i = "output/drug_name_concepts/6470_lorazepam.csv";
-            parse_drug_file(&i, &output).await?;
+            //let i = "output/drug_name_concepts/6470_lorazepam.csv";
+            //let f ="output/drug_name_concepts/4337_fentanyl.csv";
+            let p = Path::new("output/drug_name_concepts");
+            process_directory(&p).await?;
+            
         }
     }
 
@@ -140,8 +146,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 async fn parse_drug_file(
-    input_file: &str,
-    output_file: &str,
+    input_file: &Path,
 ) -> Result<(), Box<dyn std::error::Error>> {
     //Open CSV file and parse each drug name, writing the results to a new CSV file
     let mut rdr = csv::Reader::from_path(input_file)?;
@@ -156,5 +161,19 @@ async fn parse_drug_file(
     }
     
     
+    Ok(())
+}
+
+async fn process_directory(directory: &Path) -> std::io::Result<()> {
+    for entry in fs::read_dir(directory)? {
+        let entry = entry?;
+        let path = entry.path();
+
+        if path.is_file() {
+            println!("Processing: {}", path.display());
+            parse_drug_file(&path).await;
+        }
+    }
+
     Ok(())
 }
