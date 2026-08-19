@@ -10,6 +10,9 @@ use map::map;
 mod concept;
 use concept::concepts;
 
+mod parser;
+use parser::parse;
+
 
 
 /// Strips down a DEA controlled substances list to only the relevant columns and removes any entries that are in the exclusion list.
@@ -84,6 +87,22 @@ enum Commands {
         )]
         output: String,
     },
+
+    ParseDrug {
+        #[arg(
+            short ='i',
+            long,
+            default_value = "./output/rxnorm_catalog.csv"
+        )]
+        input: String,              
+
+        #[arg(
+            short ='o',
+            long,
+            default_value = "./output/parsed_drugs.csv"
+        )]
+        output: String,
+    },
 }
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -108,9 +127,34 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("Getting concepts for {input} and writing to {output}");
             concepts(&input, &output).await?;   
         }
+
+        Commands::ParseDrug { input, output } => {
+            println!("Parsing drugs from {input} and writing to {output}");
+            let i = "output/drug_name_concepts/6470_lorazepam.csv";
+            parse_drug_file(&i, &output).await?;
+        }
     }
 
 
     Ok(())
 }
 
+async fn parse_drug_file(
+    input_file: &str,
+    output_file: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    //Open CSV file and parse each drug name, writing the results to a new CSV file
+    let mut rdr = csv::Reader::from_path(input_file)?;
+    for entry in rdr.records() {
+        let record = entry?;
+        let drug_name = &record[1];
+        let rxcui = &record[0];
+        let tty = &record[3];
+        println!("Parsing drug: {drug_name} with RXCUI: {rxcui}");
+        let parsed = parse(rxcui,tty,drug_name)?;
+        println!("Got: {:?}", parsed);
+    }
+    
+    
+    Ok(())
+}
