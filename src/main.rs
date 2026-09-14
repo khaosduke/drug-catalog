@@ -13,6 +13,9 @@ use concept::concepts;
 mod parser;
 use parser::parse;
 
+mod curate;
+use curate::curate;
+
 use std::fs;
 use std::path::Path;
 
@@ -106,6 +109,22 @@ enum Commands {
         )]
         output: String,
     },
+
+    Curate {
+        #[arg(
+            short ='i',
+            long,
+            default_value = "./output/parsed_drugs.csv"
+        )]
+        input: String,              
+
+        #[arg(
+            short ='o',
+            long,
+            default_value = "./output/curated_drugs.csv"
+        )]
+        output: String,
+    },
 }
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -138,6 +157,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let p = Path::new("output/drug_name_concepts");
             process_directory(&p).await?;
             
+        }
+
+        Commands::Curate { input, output }  => {
+            println!("Curating drugs from {input} and writing to {output}");
+            let p = Path::new("output/parsed_drugs.csv");
+            curate(&input, &output).await?;
         }
     }
 
